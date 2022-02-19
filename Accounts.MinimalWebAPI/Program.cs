@@ -15,8 +15,11 @@ builder.Services.AddDbContext<IAccountsDbContext, AccountsDbContext>(options =>
 builder.Services.Configure<KafkaConsumerConfig>(builder.Configuration.GetSection("KafkaConsumerConfigure"));
 builder.Services.AddTransient<IAccountsService, AccountsService>();
 builder.Services.AddHostedService<KafkaConsumerService>();
+builder.Services.AddGrpc();
 
 var app = builder.Build();
+app.MapGrpcService<AccountsGrpcService>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

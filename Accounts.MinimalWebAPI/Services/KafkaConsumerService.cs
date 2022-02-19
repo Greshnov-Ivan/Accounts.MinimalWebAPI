@@ -32,24 +32,20 @@ namespace Accounts.MinimalWebAPI.Services
                 using var consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
                 consumer.Subscribe(_topic);
 
-                try
+                while (!stoppingToken.IsCancellationRequested)
                 {
-                    while (!stoppingToken.IsCancellationRequested)
+                    var consume = consumer.Consume(TimeSpan.FromSeconds(5)); 
+                    if (consume is not null)
                     {
-                        var message = consumer.Consume(TimeSpan.FromSeconds(5)); //var message = JsonSerializer.Deserialize<objectType>(consumer.Message.Value);
-                        if (message is not null)
-                        {
-                            using var scope = _serviceProvider.CreateScope();
-                            var accountsService = scope.ServiceProvider.GetRequiredService<IAccountsService>();
-                            await accountsService.Create(message.Message.Value, stoppingToken);
-                            consumer.Commit(message);
-                        }
+                        var message = JsonSerializer.Deserialize<string>(consume.Message.Value);
+                        using var scope = _serviceProvider.CreateScope();
+                        var accountsService = scope.ServiceProvider.GetRequiredService<IAccountsService>();
+                        await accountsService.Create(message, stoppingToken);
+                        //consumer.Commit(consume);
                     }
                 }
-                catch (OperationCanceledException)
-                {
-                    consumer.Close();
-                }
+                
+                consumer.Close();
             }
             catch (Exception ex)
             {
