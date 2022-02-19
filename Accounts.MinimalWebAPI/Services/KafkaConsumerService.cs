@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Accounts.MinimalWebAPI.Services
 {
-    public class KafkaConsumerService: IHostedService
+    public class KafkaConsumerService: BackgroundService
     {
         private readonly string _topic;
         private readonly ConsumerConfig _config;
@@ -25,27 +25,23 @@ namespace Accounts.MinimalWebAPI.Services
             _topic = options.Value.Topic;
             _serviceProvider = serviceProvider;            
         }
-
-        public async Task StartAsync(CancellationToken cancellationToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
-                using var consumer = new ConsumerBuilder<Ignore, string>(_config).SetErrorHandler((_, e) => _logger.LogError($"[consumerOptions.Topic] Consumer error: {e.Reason}")).Build();
+                using var consumer = new ConsumerBuilder<Ignore, string>(_config).Build();
                 consumer.Subscribe(_topic);
 
                 try
                 {
-                    while (!cancellationToken.IsCancellationRequested)
+                    while (!stoppingToken.IsCancellationRequested)
                     {
-                        var message = consumer.Consume(10000);
-                        /*var message = JsonSerializer.Deserialize
-                            <OrderProcessingRequest>
-                                (consumer.Message.Value);*/
+                        var message = consumer.Consume(TimeSpan.FromSeconds(5)); //var message = JsonSerializer.Deserialize<objectType>(consumer.Message.Value);
                         if (message is not null)
                         {
                             using var scope = _serviceProvider.CreateScope();
                             var accountsService = scope.ServiceProvider.GetRequiredService<IAccountsService>();
-                            await accountsService.Create(message.Message.Value, cancellationToken);
+                            await accountsService.Create(message.Message.Value, stoppingToken);
                             consumer.Commit(message);
                         }
                     }
@@ -59,10 +55,6 @@ namespace Accounts.MinimalWebAPI.Services
             {
                 _logger.LogError($"Oops, something went wrong: {ex}");
             }
-        }
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }

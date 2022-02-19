@@ -1,4 +1,6 @@
-﻿namespace Accounts.MinimalWebAPI.Services
+﻿using Accounts.MinimalWebAPI.Domain;
+
+namespace Accounts.MinimalWebAPI.Services
 {
     public interface IAccountsService
     {

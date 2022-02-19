@@ -1,4 +1,4 @@
-﻿namespace Accounts.MinimalWebAPI
+﻿namespace Accounts.MinimalWebAPI.Domain
 {
     public class Account
     {

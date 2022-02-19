@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Accounts.MinimalWebAPI.Domain;
+using Microsoft.EntityFrameworkCore;
 
-namespace Accounts.MinimalWebAPI
+namespace Accounts.MinimalWebAPI.Infrastructure
 {
     public interface IAccountsDbContext
     {

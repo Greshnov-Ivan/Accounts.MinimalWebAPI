@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Accounts.MinimalWebAPI.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Accounts.MinimalWebAPI
+namespace Accounts.MinimalWebAPI.Infrastructure
 {
     public class AccountConfiguration : IEntityTypeConfiguration<Account>
     {

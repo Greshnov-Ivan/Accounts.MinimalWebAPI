@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Accounts.MinimalWebAPI.Domain;
+using Accounts.MinimalWebAPI.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 
 namespace Accounts.MinimalWebAPI.Services
@@ -71,21 +73,21 @@ namespace Accounts.MinimalWebAPI.Services
 
         public async Task DeleteAll(CancellationToken cancellationToken)
         {
-            //string query = "TRUNCATE Accounts";
-            //using (NpgsqlConnection myConnect = new NpgsqlConnection(_connectionString))
-            //{
-            //    myConnect.Open();
-            //    using (NpgsqlCommand myCommand = new NpgsqlCommand(query,myConnect))
-            //    {
-            //        await myCommand.ExecuteNonQueryAsync(cancellationToken);
-            //        myConnect.Close();
-            //    }
-            //}
+            string query = "TRUNCATE \"Accounts\"";
+            using NpgsqlConnection myConnect = new NpgsqlConnection(_connectionString);
+            {
+                myConnect.Open();
+                using (NpgsqlCommand myCommand = new NpgsqlCommand(query, myConnect))
+                {
+                    await myCommand.ExecuteNonQueryAsync(cancellationToken);
+                    myConnect.Close();
+                }
+            }
 
-            var allData = await _db.Accounts.ToListAsync(cancellationToken);
-            _db.Accounts.RemoveRange(allData);
+            //var allData = await _db.Accounts.ToListAsync(cancellationToken);
+            //_db.Accounts.RemoveRange(allData);
 
-            await _db.SaveChangesAsync(cancellationToken);
+            //await _db.SaveChangesAsync(cancellationToken);
         }
 
         /// <summary>

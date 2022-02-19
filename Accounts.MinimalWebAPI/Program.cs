@@ -1,4 +1,6 @@
 using Accounts.MinimalWebAPI;
+using Accounts.MinimalWebAPI.Domain;
+using Accounts.MinimalWebAPI.Infrastructure;
 using Accounts.MinimalWebAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
