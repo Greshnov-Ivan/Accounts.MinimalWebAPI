@@ -41,7 +41,7 @@ namespace Accounts.MinimalWebAPI.Services
                         using var scope = _serviceProvider.CreateScope();
                         var accountsService = scope.ServiceProvider.GetRequiredService<IAccountsService>();
                         await accountsService.Create(message, stoppingToken);
-                        //consumer.Commit(consume);
+                        consumer.Commit(consume);
                     }
                 }
                 

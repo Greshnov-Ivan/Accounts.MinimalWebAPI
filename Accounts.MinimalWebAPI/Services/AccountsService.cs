@@ -34,6 +34,8 @@ namespace Accounts.MinimalWebAPI.Services
 
         public async Task<Guid> Create(string userId, CancellationToken cancellationToken)
         {
+            if (await _db.Accounts.AnyAsync(a => a.UserId == userId))
+                throw new Exception("User has been created before");
             var account = new Account()
             {
                 UserId = userId,
